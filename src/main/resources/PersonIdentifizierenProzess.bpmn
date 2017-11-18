@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
+  <bpmn:collaboration id="Collaboration_1cgn2we">
+    <bpmn:participant id="Participant_1caxzly" name="Kantonales Personenregister" processRef="PersonIdentificationProcess" />
+    <bpmn:participant id="Participant_09c1oe5" name="Umzugsplattform" />
+    <bpmn:messageFlow id="MessageFlow_06ogrtw" name="Person Identifikations-merkmale" sourceRef="Participant_09c1oe5" targetRef="StartEventProcessStarted">
+      <bpmn:documentation>eCH-0194:personMoveRequest</bpmn:documentation>
+    </bpmn:messageFlow>
+    <bpmn:messageFlow id="MessageFlow_1cwplb7" name="Existenz und Umzugs-berechtigung" sourceRef="EndEventProcessEnded" targetRef="Participant_09c1oe5">
+      <bpmn:documentation>eCH-0194:personMoveResponse</bpmn:documentation>
+    </bpmn:messageFlow>
+  </bpmn:collaboration>
+  <bpmn:process id="PersonIdentificationProcess" name="Person identifizieren" isExecutable="true">
+    <bpmn:startEvent id="StartEventProcessStarted" name="Personenanfrage erhalten">
+      <bpmn:documentation><![CDATA[Der WebService-Controller hat basierend auf dem Aufruf der entsprechenden WebService-Operation eine neue Prozessinstanz erstellt und ihr folgende Prozessvariablen übergeben:
+- firstName
+- officialName
+- sex
+- dateOfBirth
+]]></bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="firstName" value="Björn" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_1m635hr</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_0te8in5" />
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1m635hr" sourceRef="StartEventProcessStarted" targetRef="Task_1rumj8u" />
+    <bpmn:sequenceFlow id="SequenceFlow_1vlxdhi" sourceRef="Task_1rumj8u" targetRef="ExclusiveGateway_11vhes7" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ag06og" sourceRef="Task_1su3zjx" targetRef="Task_0zo4rqo" />
+    <bpmn:serviceTask id="Task_1rumj8u" name="Person im Register suchen" camunda:delegateExpression="#{queryPersonInRegisterAdapter}">
+      <bpmn:documentation><![CDATA[Datenbankabfrage nach den Personenangaben
+Es wird in der Personenregister-Datenbank eine Abfrage platziert, welche einer AND-Kombination aus allen erhaltenen Prozess-Variablen entspricht. Als Antwort kommen 0-n Treffer von der Datenbank zurück, welche in einem personsFound-List-Objekt gespeichert werden. Für jede gefundene Person ist auch eCH-0194:moveAllowed enthalten.]]></bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_1m635hr</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1vlxdhi</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_11vhes7" name="Genau eine Person gefunden?">
+      <bpmn:incoming>SequenceFlow_1vlxdhi</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0smi7q5</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_146g9i8</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0smi7q5" name="ja" sourceRef="ExclusiveGateway_11vhes7" targetRef="Task_1su3zjx">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${personsFound.size() == 1}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="Task_1su3zjx" name="Person als bekannt festlegen" scriptFormat="JavaScript">
+      <bpmn:documentation><![CDATA[Wenn genau eine Person gefunden wurde, wird die personKnown-Variable auf wahr gesetzt.
+]]></bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_0smi7q5</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ag06og</bpmn:outgoing>
+      <bpmn:script><![CDATA[execution.setVariable("personKnown", true);]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_146g9i8" name="nein" sourceRef="ExclusiveGateway_11vhes7" targetRef="Task_05trjiy">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${empty personsFound || personsFound.size() > 1}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="Task_05trjiy" name="Person als unbekannt festlegen" scriptFormat="JavaScript">
+      <bpmn:documentation>Wenn keine oder mehr als eine Person in der Datenbank gefunden wurde, wird personKnown auf falsch gesetzt, denn auch bei z.B. zwei Personen mit denselben Personalien handelt es sich um eine Ausnahmesituation, die einen Schaltergang erfordert.</bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_146g9i8</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_116a8ow</bpmn:outgoing>
+      <bpmn:script><![CDATA[execution.setVariable("personKnown", false);]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_116a8ow" sourceRef="Task_05trjiy" targetRef="ExclusiveGateway_02bnobg" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_02bnobg">
+      <bpmn:incoming>SequenceFlow_116a8ow</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0r9o6ai</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_14yubtc</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_14yubtc" sourceRef="ExclusiveGateway_02bnobg" targetRef="EndEventProcessEnded" />
+    <bpmn:sequenceFlow id="SequenceFlow_0r9o6ai" sourceRef="Task_0zo4rqo" targetRef="ExclusiveGateway_02bnobg" />
+    <bpmn:scriptTask id="Task_0zo4rqo" name="Umzugs-berechtigung auslesen" scriptFormat="JavaScript">
+      <bpmn:documentation>Die Prozessvariable moveAllowed wird aus der gleichnamigen Eigenschaft der einzigen Person im personsFound-Array gelesen.</bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_1ag06og</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0r9o6ai</bpmn:outgoing>
+      <bpmn:script><![CDATA[execution.setVariable("moveAllowed", personsFound[0].isMoveAllowed());]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:endEvent id="EndEventProcessEnded" name="Personenanfrage beantwortet">
+      <bpmn:documentation><![CDATA[Dem WebService-Controller werden folgende Prozessvariablen zurück gegeben:
+- personKnown
+- (moveAllowed)
+]]></bpmn:documentation>
+      <bpmn:incoming>SequenceFlow_14yubtc</bpmn:incoming>
+      <bpmn:messageEventDefinition />
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmn:message id="Message_0te8in5" name="newPersonMoveRequestMessage" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1cgn2we">
+      <bpmndi:BPMNShape id="Participant_1caxzly_di" bpmnElement="Participant_1caxzly">
+        <dc:Bounds x="-25" y="15" width="938" height="268" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1m635hr_di" bpmnElement="SequenceFlow_1m635hr">
+        <di:waypoint xsi:type="dc:Point" x="87" y="104" />
+        <di:waypoint xsi:type="dc:Point" x="136" y="104" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="66.5" y="83" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_09c1oe5_di" bpmnElement="Participant_09c1oe5">
+        <dc:Bounds x="-25" y="-113" width="940" height="60" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0i8gvt4_di" bpmnElement="StartEventProcessStarted">
+        <dc:Bounds x="51" y="86" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="28" y="122" width="84" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_06ogrtw_di" bpmnElement="MessageFlow_06ogrtw">
+        <di:waypoint xsi:type="dc:Point" x="69" y="-53" />
+        <di:waypoint xsi:type="dc:Point" x="69" y="86" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="77" y="-44.000000000000014" width="70" height="36" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vlxdhi_di" bpmnElement="SequenceFlow_1vlxdhi">
+        <di:waypoint xsi:type="dc:Point" x="236" y="104" />
+        <di:waypoint xsi:type="dc:Point" x="296" y="104" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="221" y="83" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0axs7wu_di" bpmnElement="Task_1rumj8u">
+        <dc:Bounds x="136" y="64" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ag06og_di" bpmnElement="SequenceFlow_1ag06og">
+        <di:waypoint xsi:type="dc:Point" x="516" y="104" />
+        <di:waypoint xsi:type="dc:Point" x="555" y="104" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="490.5" y="83" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_04szdmz_di" bpmnElement="EndEventProcessEnded">
+        <dc:Bounds x="807" y="86" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="784" y="122" width="84" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_1cwplb7_di" bpmnElement="MessageFlow_1cwplb7">
+        <di:waypoint xsi:type="dc:Point" x="825" y="86" />
+        <di:waypoint xsi:type="dc:Point" x="825" y="-53" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="839" y="-38.093525179856115" width="63" height="36" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_11vhes7_di" bpmnElement="ExclusiveGateway_11vhes7" isMarkerVisible="true">
+        <dc:Bounds x="296" y="79" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="291" y="33" width="60" height="36" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0smi7q5_di" bpmnElement="SequenceFlow_0smi7q5">
+        <di:waypoint xsi:type="dc:Point" x="346" y="104" />
+        <di:waypoint xsi:type="dc:Point" x="416" y="104" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="376.5" y="83" width="9" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0s8x06j_di" bpmnElement="Task_1su3zjx">
+        <dc:Bounds x="416" y="64" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_02bnobg_di" bpmnElement="ExclusiveGateway_02bnobg" isMarkerVisible="true">
+        <dc:Bounds x="692" y="79" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="717" y="133" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_14yubtc_di" bpmnElement="SequenceFlow_14yubtc">
+        <di:waypoint xsi:type="dc:Point" x="742" y="104" />
+        <di:waypoint xsi:type="dc:Point" x="807" y="104" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="774.5" y="83" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_146g9i8_di" bpmnElement="SequenceFlow_146g9i8">
+        <di:waypoint xsi:type="dc:Point" x="321" y="129" />
+        <di:waypoint xsi:type="dc:Point" x="321" y="223" />
+        <di:waypoint xsi:type="dc:Point" x="416" y="223" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="326" y="170" width="20" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1qc2e10_di" bpmnElement="Task_05trjiy">
+        <dc:Bounds x="416" y="183" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_116a8ow_di" bpmnElement="SequenceFlow_116a8ow">
+        <di:waypoint xsi:type="dc:Point" x="516" y="223" />
+        <di:waypoint xsi:type="dc:Point" x="717" y="223" />
+        <di:waypoint xsi:type="dc:Point" x="717" y="129" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="616.5" y="202" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0r9o6ai_di" bpmnElement="SequenceFlow_0r9o6ai">
+        <di:waypoint xsi:type="dc:Point" x="655" y="104" />
+        <di:waypoint xsi:type="dc:Point" x="692" y="104" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="673.5" y="83" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0wlgz5l_di" bpmnElement="Task_0zo4rqo">
+        <dc:Bounds x="555" y="64" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
