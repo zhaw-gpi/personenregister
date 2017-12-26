@@ -46,6 +46,16 @@ public class GetResidentFromRegisterDbDelegate implements JavaDelegate{
                 (Date) processVariables.get("dateOfBirth")
         );
         
+        // Wenn genau eine Person gefunden wurde, sollen die mitzuziehnden Personen als Prozess-Variable gesetzt werden.
+        if(personsFound.size() == 1) {
+           //Da es ja nur ein Element in der Liste gibt, wird das erste Element (also Index 0) aus der Liste in eine Variable von Typ Resident zugewiesen.
+           Resident resident = personsFound.get(0);
+           // Die relatives dieser Person werden ermittelt
+           List<Resident> relatives = resident.getRelativesOnly();
+           //Prozessvariable personRelatives wird erstellt.
+           delegateExecution.setVariable("personRelatives", relatives);
+        }
+        
         // Das personsFound-Objekt der gleich benannten neuen Prozess-Variable zuweisen
         delegateExecution.setVariable("personsFound", personsFound);
     }

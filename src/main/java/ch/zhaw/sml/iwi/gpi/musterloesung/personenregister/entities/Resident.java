@@ -5,12 +5,15 @@ package ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.entities;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -21,7 +24,7 @@ import javax.validation.constraints.Size;
  * @author scep
  */
 @Entity
-@Table(name = "Resident")
+@Table(name = "RESIDENT")
 public class Resident implements Serializable {
 
     @Id
@@ -59,6 +62,30 @@ public class Resident implements Serializable {
     @Basic
     @NotNull
     private boolean moveAllowed;
+
+    @ManyToOne(targetEntity = ResidentRelation.class)
+    @JoinColumn(name = "RESIDENT_ID")
+    private ResidentRelation residentRelation;
+    
+    // Sich selbst aus der relatives Liste entfernen, da man nur alle mitzuziehende Personen und nicht
+    // zusätzlich sich selbst in dieser Liste haben möchte.
+    public List<Resident> getRelativesOnly() {
+        
+        List<Resident> relatives = null;
+        
+        if (this.getResidentRelation() != null) {
+            //Alle der ResidentRelation gehörenden Residents werden der lRelatives List vom Typ Resident zugewiesen.
+            relatives = this.getResidentRelation().getResidents();
+
+            //Es wird überprüft ob die Liste diese(this) Instanz der Entität beinhaltet. Wenn ja, wird diese(this) Instanz der Entität aus der Liste entfernt. 
+            if(relatives.contains(this)) {
+                relatives.remove(this);
+            }
+        }
+        
+        //lRelatives wird zurückgegeben
+        return relatives;
+    }
 
     public Long getPersonId() {
         return this.personId;
@@ -106,6 +133,14 @@ public class Resident implements Serializable {
 
     public void setMoveAllowed(boolean moveAllowed) {
         this.moveAllowed = moveAllowed;
+    }
+
+    public ResidentRelation getResidentRelation() {
+        return this.residentRelation;
+    }
+
+    public void setResidentRelation(ResidentRelation residentRelation) {
+        this.residentRelation = residentRelation;
     }
 
 }

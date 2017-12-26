@@ -1,15 +1,32 @@
-Björn Scheppler, 18.11.2017
+Björn Scheppler, 26.12.2017
 
-# Read Me Personenregister
 In diesem Projekt wird eine mögliche Lösung für einen Ausschnitt aus dem
 Personenregister-System entwickelt, welche im Rahmen der Modulabschlussarbeit
 für die eUmzug-Plattform benötigt wird.
 
-# Status
-Abgeschlossen, wartet auf Feedback von Dozierenden und Studierenden
+# Informationen für das Testen
+## Tests mit soapUI
+1. Clean & Build: Dabei werden im Target nebst den kompilierten Java-Klassen auch
+die eCH-Java-Klassen generiert vom JAXB2-Maven-Plugin.
+2. Run, damit der SOAP WebService läuft und über die URL http://localhost:8083/soap
+verfügbar ist
+3. Nun entweder in soapUI händisch neue SOAP-Requests generieren mit der WSDL
+http://localhost:8083/soap/PersonenRegisterService?wsdl. Welche Personen dabei
+gefunden werden können, kann über die H2-Konsole geprüft werden in den Tabellen
+RESIDENT und RESIDENT_RELATION. Hierzu auf http://localhost:8083/console anmelden 
+mit Driver Class = org.h2.Driver, JDBC URL = jdbc:h2:./personenregister, User Name 
+= sa, Password = Leer lassen
+4. Oder die vorgefertigten Requests/TestSuite nutzen im soapUI-Projekt \src\test\resources\
+Personenregister-Testdaten-soapui-project.xml
 
-# Eigentliche Dokumentation
-## Prototypische Vereinfachungen
+## Tests aus der Umzugsplattform heraus
+Hierzu den Anweisungen folgen in https://github.com/zhaw-gpi/eumzug_musterloesung
+
+# TODO
+1. PersonenRegisterController:135:localPersonId sollte frisch pro Person generiert
+werden und nicht von Hauptperson übernommen werden
+
+# Prototypische Vereinfachungen
 1. In personMoveRequest werden die municipalityId und municipalityName 
 vermutlich deshalb mitgeliefert, weil eine Person in mehreren Gemeinden registriert
 sein kann (Hauptwohnsitz und Wochenaufenthalter). Das heisst, moveAllowed müsste
@@ -26,3 +43,10 @@ XSD-Restrictions hinzufügt (also, dass z.B. ein String nicht leer oder länger 
 Jahren nicht mehr aktualisiert => man müsste entweder ein eigenes Plugin schreiben
 oder aber die Annotations in den generierten Java-Klassen von Hand hinzufügen, aber
 dann wäre die Generierung im Build-Prozess natürlich nicht mehr opportun.
+
+# Mitwirkende
+1. Björn Scheppler: Hauptarbeit
+2. Peter Heinrich: Der stille Support im Hintergrund mit vielen Tipps sowie zuständig
+für den Haupt-Stack mit SpringBoot & Co.
+3. Gruppe TZb02 (Bekim Kadrija, Jovica Rajic, Luca Belmonte, Simon Bärtschi, Sven 
+Baumann): Mitzuziehende Personen auswählen

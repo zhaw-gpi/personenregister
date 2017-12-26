@@ -16,7 +16,7 @@ public class DateConversionHelper {
      * @param date
      * @return 
      */
-    public XMLGregorianCalendar DateToXMLGregorianCalendar(Date date){
+    public static XMLGregorianCalendar DateToXMLGregorianCalendar(Date date){
         // Initalisieren einer neuen GregorianCalendar-Variable als Zwischenschritt
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
 

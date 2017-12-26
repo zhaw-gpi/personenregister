@@ -1,15 +1,19 @@
 package ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.controller;
 
+import ch.ech.xmlns.ech_0044._4.DatePartiallyKnownType;
 import ch.ech.xmlns.ech_0044._4.PersonIdentificationType;
 import ch.ech.xmlns.ech_0058._5.HeaderType;
 import ch.ech.xmlns.ech_0194._1.DeliveryType;
 import ch.ech.xmlns.ech_0194._1.InfoType;
 import ch.ech.xmlns.ech_0194._1.NegativeReportType;
 import ch.ech.xmlns.ech_0194._1.PersonMoveResponse;
+import ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.entities.Resident;
+import ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.helpers.DateConversionHelper;
 import ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.helpers.DefaultHeaderHelper;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.runtime.ProcessInstanceWithVariables;
@@ -114,6 +118,42 @@ public class PersonenRegisterController {
 
                 // Die Integer-Variable kann dem Antwort-Objekt übergeben werden
                 personMoveResponse.setMoveAllowed(moveAllowedInteger);
+                
+                //Prozessvariable personRelatives wird einer List zugewiesen. Die Prozessvariable beinhaltet alle mitzuziehende Personen. 
+                List<Resident> relatives = (List<Resident>)processEndVariables.get("personRelatives");
+                //Es wird überprüft ob die Liste der mitzuziehenden Personen nicht null und nicht leer ist.
+                if(relatives != null && !relatives.isEmpty()) {
+                    //Es wird über alle mitzuziehende Person iteriert und jedes Element der Liste wird einer Variable vom Typ Resident zugewiesen. 
+                    for (Resident resident : relatives) {
+                        // Nur Personen, welche umziehen dürfen, werden der Liste hinzugefügt
+                        if (resident.isMoveAllowed()) {
+                            //Related Person wird instanziert. RelatedPerson entspricht letztendlich einer mitzuziehenden Person.
+                            PersonMoveResponse.RelatedPerson relatedPerson = new PersonMoveResponse.RelatedPerson();
+                            //PersonIdentificationType wird für die mitzuziehenden Person instanziert.
+                            PersonIdentificationType relatedPersonIdentification = new PersonIdentificationType();
+                            //Vorhandene LocalPersonID der Hauptperson wird für jede mitzuziehende Person zugewiesen.
+                            relatedPersonIdentification.setLocalPersonId(personIdentification.getLocalPersonId());
+                            //Vorname der mitzuziehenden Person wird gesetzt.
+                            relatedPersonIdentification.setFirstName(resident.getFirstName());
+                            //Nachname der mitzuziehenden Person wird gesetzt.
+                            relatedPersonIdentification.setOfficialName(resident.getOfficialName());
+                            //DatePartiallyKnownType wird instanziert. Wird gebraucht um Geburtstagsdatum der mitzuziehenden Person zu setzen.
+                            DatePartiallyKnownType relatedPersonDateOfBirth = new DatePartiallyKnownType();
+                            //Das Geburtstagsdatum wird im Format YearMonthDay gesetzt. Es wird die Methode dateToXMLGregorianCalendar in der Klasse DateConversionHelper aufgerufen, 
+                            //um das Datum in ein XMLGregorianCalendar umzuwandeln.
+                            relatedPersonDateOfBirth.setYearMonthDay(DateConversionHelper.DateToXMLGregorianCalendar(resident.getDateOfBirth()));
+                            //Geburtstagsdatum der mitzuziehenden Person wird gesetzt.
+                            relatedPersonIdentification.setDateOfBirth(relatedPersonDateOfBirth);
+                            //Geschlecht der mitzuziehenden Person wird gesetzt. Da ein String erwartet wird, wird Variable sex von int in ein String umgewandelt.
+                            relatedPersonIdentification.setSex(Integer.toString(resident.getSex()));
+                            //Die Personen Identifikation wird der mitzuziehenden Person gesetzt.
+                            relatedPerson.setPersonIdentification(relatedPersonIdentification);
+                            // Die mitzuziehende Personen werden dem Antwort-Objekt übergeben, indem sie der relatedPerson Liste
+                            // hinzugefügt werden.
+                            personMoveResponse.getRelatedPerson().add(relatedPerson);
+                        }
+                    }
+                }
             }        
             
             // Das Antwort-Teil-Objekt wird dem Antwort-Objekt zugewiesen
