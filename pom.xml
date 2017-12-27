@@ -15,10 +15,10 @@
     <!-- Verschiedene Eigenschaften, die von Maven und untenstehender Dependency-Deklarationen genutzt werden -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <camunda.version>7.7.0</camunda.version>
+        <camunda.version>7.8.0</camunda.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <camunda-bpm-spring-boot-starter.version>2.2.0</camunda-bpm-spring-boot-starter.version>
+        <camunda-bpm-spring-boot-starter.version>2.3.0</camunda-bpm-spring-boot-starter.version>
     </properties>
     
     <!-- Definiert camunda-bom als zentrale Dependency, welche sicherstellt, dass
@@ -39,21 +39,21 @@
     <dependencies>
         <!-- Camunda Spring Boot Starter für die Camunda Plattform (v.a. Engine) -->
         <dependency>
-            <groupId>org.camunda.bpm.extension.springboot</groupId>
+            <groupId>org.camunda.bpm.springboot</groupId>
             <artifactId>camunda-bpm-spring-boot-starter</artifactId>
             <version>${camunda-bpm-spring-boot-starter.version}</version>
         </dependency>
 	
         <!-- Camunda Spring Boot Starter für die Webapps (Tasklist & Co.) -->
         <dependency>
-            <groupId>org.camunda.bpm.extension.springboot</groupId>
+            <groupId>org.camunda.bpm.springboot</groupId>
             <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
             <version>${camunda-bpm-spring-boot-starter.version}</version>
         </dependency>
 	
         <!-- Camunda Spring Boot Starter für die REST API -->
         <dependency>
-            <groupId>org.camunda.bpm.extension.springboot</groupId>
+            <groupId>org.camunda.bpm.springboot</groupId>
             <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
             <version>${camunda-bpm-spring-boot-starter.version}</version>
         </dependency>
@@ -78,7 +78,7 @@
         
         <!-- Camunda Spring Boot Starter für automatisierte Test (BPM Asserts) -->
         <dependency>
-            <groupId>org.camunda.bpm.extension.springboot</groupId>
+            <groupId>org.camunda.bpm.springboot</groupId>
             <artifactId>camunda-bpm-spring-boot-starter-test</artifactId>
             <version>${camunda-bpm-spring-boot-starter.version}</version>
             <scope>test</scope>
