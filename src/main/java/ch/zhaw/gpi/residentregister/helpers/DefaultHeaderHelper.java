@@ -1,5 +1,6 @@
-package ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.helpers;
+package ch.zhaw.gpi.residentregister.helpers;
 
+import ch.zhaw.gpi.residentregister.helpers.DateConversionHelper;
 import ch.ech.xmlns.ech_0058._5.HeaderType;
 import ch.ech.xmlns.ech_0058._5.SendingApplicationType;
 import java.util.Date;

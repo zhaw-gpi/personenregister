@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" pkg="ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.entities" v="4.6.1" rws="_150939113079244" Pws="_150939113079244" cws="_150939113079244" persistenceUnitName="DEFAULT_PU" sm="false" xs="false" id="_150939113079243" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
-    <jpa:entity compositePrimaryKeyClass="ResidentPK" abs="false" class="Resident" v="true" xre="false" m="false" rootElement="_150939113079243" id="_150939113295745">
+<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" pkg="ch.zhaw.gpi.residentregister.entities" v="4.6.1" rws="_150939113079244" Pws="_150939113079244" cws="_150939113079244" persistenceUnitName="DEFAULT_PU" sm="false" xs="false" id="_150939113079243" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
+    <jpa:entity compositePrimaryKeyClass="ResidentEntityPK" abs="false" class="ResidentEntity" v="true" xre="false" m="false" rootElement="_150939113079243" id="_150939113295745">
         <jpa:ath>scep</jpa:ath>
         <jpa:attributes>
             <jpa:basic attribute-type="String" v="true" xvt="" name="firstName" ft="false" id="_150939113295747">
@@ -48,7 +48,7 @@
                 </jpa:bv>
                 <jpa:column unique="false" nullable="false" insertable="true" updatable="true"/>
             </jpa:basic>
-            <jpa:many-to-one optional="true" primaryKey="false" connected-entity-id="_1514272307518262" connected-attribute-id="_1514272489692268" v="true" xvt="" name="residentRelation" id="_1514272489691267">
+            <jpa:many-to-one optional="true" primaryKey="false" connected-entity-id="_1514272307518262" connected-attribute-id="_1514272489692268" v="true" xvt="" name="residentRelationEntity" id="_1514272489691267">
                 <jpa:xwm/>
                 <jpa:xm/>
                 <jpa:join-column name="RESIDENT_ID" rc="" unique="false" nullable="true" insertable="true" updatable="true" column-definition="" table=""/>
@@ -59,31 +59,31 @@
                 <jpa:generated-value strategy="AUTO"/>
             </jpa:id>
         </jpa:attributes>
-        <jpa:nq e="false" name="Resident.findAll">
-            <jpa:query>Select e from Resident e</jpa:query>
+        <jpa:nq e="false" name="ResidentEntity.findAll">
+            <jpa:query>Select e from ResidentEntity e</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="Resident.findByFirstName">
-            <jpa:query>Select r from Resident r where r.firstName=:firstName</jpa:query>
+        <jpa:nq e="false" name="ResidentEntity.findByFirstName">
+            <jpa:query>Select r from ResidentEntity r where r.firstName=:firstName</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="Resident.findByOfficialName">
-            <jpa:query>Select r from Resident r where r.officialName=:officialName</jpa:query>
+        <jpa:nq e="false" name="ResidentEntity.findByOfficialName">
+            <jpa:query>Select r from ResidentEntity r where r.officialName=:officialName</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="Resident.findBySex">
-            <jpa:query>Select r from Resident r where r.sex=:sex</jpa:query>
+        <jpa:nq e="false" name="ResidentEntity.findBySex">
+            <jpa:query>Select r from ResidentEntity r where r.sex=:sex</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="Resident.findByDateOfBirth">
-            <jpa:query>Select r from Resident r where r.dateOfBirth=:dateOfBirth</jpa:query>
+        <jpa:nq e="false" name="ResidentEntity.findByDateOfBirth">
+            <jpa:query>Select r from ResidentEntity r where r.dateOfBirth=:dateOfBirth</jpa:query>
         </jpa:nq>
-        <jpa:nq e="false" name="Resident.findByMoveAllowed">
-            <jpa:query>Select r from Resident r where r.moveAllowed=:moveAllowed</jpa:query>
+        <jpa:nq e="false" name="ResidentEntity.findByMoveAllowed">
+            <jpa:query>Select r from ResidentEntity r where r.moveAllowed=:moveAllowed</jpa:query>
         </jpa:nq>
         <jpa:table name="Resident"/>
     </jpa:entity>
-    <jpa:entity compositePrimaryKeyClass="ResidentRelationPK" abs="false" class="ResidentRelation" v="true" xre="false" m="false" rootElement="_150939113079243" id="_1514272307518262">
+    <jpa:entity compositePrimaryKeyClass="ResidentRelationEntityPK" abs="false" class="ResidentRelationEntity" v="true" xre="false" m="false" rootElement="_150939113079243" id="_1514272307518262">
         <jpa:inf e="true" n="java.io.Serializable"/>
         <jpa:ath>Bekim</jpa:ath>
         <jpa:attributes>
-            <jpa:one-to-many orp="false" collection-type="java.util.List" cit="java.util.ArrayList" connected-entity-id="_150939113295745" connected-attribute-id="_1514272489691267" v="true" xvt="" name="residents" id="_1514272489692268">
+            <jpa:one-to-many orp="false" collection-type="java.util.List" cit="java.util.ArrayList" connected-entity-id="_150939113295745" connected-attribute-id="_1514272489691267" v="true" xvt="" name="residentEntities" id="_1514272489692268">
                 <jpa:xwm/>
                 <jpa:xm/>
             </jpa:one-to-many>
@@ -94,8 +94,8 @@
                 <jpa:generated-value/>
             </jpa:id>
         </jpa:attributes>
-        <jpa:nq e="false" name="ResidentRelation.findAll">
-            <jpa:query>Select e from ResidentRelation e</jpa:query>
+        <jpa:nq e="false" name="ResidentRelationEntity.findAll">
+            <jpa:query>Select e from ResidentRelationEntity e</jpa:query>
         </jpa:nq>
         <jpa:table name="RESIDENT_RELATION"/>
     </jpa:entity>

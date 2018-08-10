@@ -1,6 +1,6 @@
-package ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.repository;
+package ch.zhaw.gpi.residentregister.repository;
 
-import ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.entities.Resident;
+import ch.zhaw.gpi.residentregister.entities.ResidentEntity;
 import java.util.Date;
 import java.util.List;
 import org.springframework.data.jpa.repository.Query;
@@ -8,12 +8,12 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 /**
- * Repository mit CRUD- und weitern Operationen für Bürger-Objekte (Resident)
- * Erweitert die mit dem Spring Data JPA-Paket mitgelieferte CrudRepository, so
- * dass einerseits einfache CRUD-Operationen mit der Resident-Entität durchgeführt
- * werden können als auch eigene definierte Methoden
+ * Repository mit CRUD- und weitern Operationen für Bürger-Objekte (ResidentEntity)
+ Erweitert die mit dem Spring Data JPA-Paket mitgelieferte CrudRepository, so
+ dass einerseits einfache CRUD-Operationen mit der ResidentEntity-Entität durchgeführt
+ werden können als auch eigene definierte Methoden
  */
-public interface ResidentRepository extends CrudRepository<Resident, Long> {
+public interface ResidentRegisterRepository extends CrudRepository<ResidentEntity, Long> {
     
     /**
      * Methode, um alle Personen mit bestimmten Identifikationsmerkmalen zu erhalten
@@ -28,7 +28,7 @@ public interface ResidentRepository extends CrudRepository<Resident, Long> {
     @Query("SELECT r FROM Resident r WHERE r.firstName = :firstName AND " +
             "r.officialName = :officialName AND r.sex = :sex AND " +
             "r.dateOfBirth = :dateOfBirth")
-    public List<Resident> findResidentByIdentificationParameters(
+    public List<ResidentEntity> findResidentByIdentificationParameters(
             @Param("firstName") String firstName,
             @Param("officialName") String officialName,
             @Param("sex") Integer sex,

@@ -1,6 +1,6 @@
-package ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.configuration;
+package ch.zhaw.gpi.residentregister.configuration;
 
-import ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.controller.PersonenRegisterController;
+import ch.zhaw.gpi.residentregister.controller.ResidentRegisterController;
 import org.h2.server.web.WebServlet;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -35,7 +35,7 @@ public class ApplicationConfiguration {
      * @return 
      */
     @Bean
-    public PersonenRegisterController personenRegisterController() {
-        return new PersonenRegisterController();
+    public ResidentRegisterController personenRegisterController() {
+        return new ResidentRegisterController();
     }   
 }

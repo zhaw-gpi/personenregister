@@ -1,4 +1,4 @@
-package ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.controller;
+package ch.zhaw.gpi.residentregister.controller;
 
 import ch.ech.xmlns.ech_0044._4.DatePartiallyKnownType;
 import ch.ech.xmlns.ech_0044._4.PersonIdentificationType;
@@ -7,9 +7,9 @@ import ch.ech.xmlns.ech_0194._1.DeliveryType;
 import ch.ech.xmlns.ech_0194._1.InfoType;
 import ch.ech.xmlns.ech_0194._1.NegativeReportType;
 import ch.ech.xmlns.ech_0194._1.PersonMoveResponse;
-import ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.entities.Resident;
-import ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.helpers.DateConversionHelper;
-import ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.helpers.DefaultHeaderHelper;
+import ch.zhaw.gpi.residentregister.entities.ResidentEntity;
+import ch.zhaw.gpi.residentregister.helpers.DateConversionHelper;
+import ch.zhaw.gpi.residentregister.helpers.DefaultHeaderHelper;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * wobei jede Funktion einer gleich lautenden Web Service-Operation entspricht.
  * Sie stellt die Verbindung zwischen Web Service-Schnittstelle und Process Engine her
  */
-public class PersonenRegisterController {
+public class ResidentRegisterController {
     
     /**
      * Unser Web Service nutzt die Camunda Process Engine als Abhängigkeit
@@ -120,11 +120,11 @@ public class PersonenRegisterController {
                 personMoveResponse.setMoveAllowed(moveAllowedInteger);
                 
                 //Prozessvariable personRelatives wird einer List zugewiesen. Die Prozessvariable beinhaltet alle mitzuziehende Personen. 
-                List<Resident> relatives = (List<Resident>)processEndVariables.get("personRelatives");
+                List<ResidentEntity> relatives = (List<ResidentEntity>)processEndVariables.get("personRelatives");
                 //Es wird überprüft ob die Liste der mitzuziehenden Personen nicht null und nicht leer ist.
                 if(relatives != null && !relatives.isEmpty()) {
-                    //Es wird über alle mitzuziehende Person iteriert und jedes Element der Liste wird einer Variable vom Typ Resident zugewiesen. 
-                    for (Resident resident : relatives) {
+                    //Es wird über alle mitzuziehende Person iteriert und jedes Element der Liste wird einer Variable vom Typ ResidentEntity zugewiesen. 
+                    for (ResidentEntity resident : relatives) {
                         // Nur Personen, welche umziehen dürfen, werden der Liste hinzugefügt
                         if (resident.isMoveAllowed()) {
                             //Related Person wird instanziert. RelatedPerson entspricht letztendlich einer mitzuziehenden Person.

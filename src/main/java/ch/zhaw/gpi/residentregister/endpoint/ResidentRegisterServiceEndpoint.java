@@ -1,8 +1,8 @@
-package ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.endpoint;
+package ch.zhaw.gpi.residentregister.endpoint;
 
 
 import ch.ech.xmlns.ech_0194._1.DeliveryType;
-import ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.controller.PersonenRegisterController;
+import ch.zhaw.gpi.residentregister.controller.ResidentRegisterController;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @WebService(name="Personenregister-Service", portName="PersonenRegisterServicePort", targetNamespace = "http://www.ech.ch/xmlns/eCH-0194/1")
 @SchemaValidation
-public class PersonenRegisterService {
+public class ResidentRegisterServiceEndpoint {
     
     /**
      * Die eigentliche Implementation soll getrennt von der Schnittstellen- 
@@ -31,7 +31,7 @@ public class PersonenRegisterService {
      * es zur Laufzeit verfügbar ist, wird es in ApplicationConfiguration.java erstellt
      */
     @Autowired
-    private PersonenRegisterController personenRegisterController;
+    private ResidentRegisterController personenRegisterController;
 
     /**
      * Definition der Webservice-Operation handleDelivery

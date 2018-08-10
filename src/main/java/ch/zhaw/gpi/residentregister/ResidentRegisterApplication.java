@@ -1,11 +1,8 @@
-package ch.zhaw.sml.iwi.gpi.musterloesung.personenregister;
+package ch.zhaw.gpi.residentregister;
 
 import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication;
-import org.h2.server.web.WebServlet;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.ServletRegistrationBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
@@ -24,8 +21,8 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @SpringBootApplication
 @EnableProcessApplication
-@ComponentScan("ch.zhaw.sml.iwi.gpi.musterloesung.personenregister")
-public class CamundaSpringBootStarter {
+@ComponentScan
+public class ResidentRegisterApplication {
 
     /**
      * Haupt-Methode, welche beim Build/Run-Befehl eine
@@ -34,6 +31,6 @@ public class CamundaSpringBootStarter {
      * @param args
      */
     public static void main(String[] args) {
-        SpringApplication.run(CamundaSpringBootStarter.class, args);
+        SpringApplication.run(ResidentRegisterApplication.class, args);
     }
 }

@@ -1,67 +1,74 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!-- Version von Maven -->
     <modelVersion>4.0.0</modelVersion>
     
-    <!-- Bezeichnung des Maven-Projekts (ArtifactId, name) -->
-    <artifactId>Personenregister</artifactId>
+    <!-- Grundangaben zum Maven-Projekt, Versionsnummer (hinterste Ziffer) jedesmal 
+    um 1 erhöhen, wenn etwas ändert. Die ersten zwei Ziffern entsprechen Spring 
+    Boot-Versionsnummer -->
+    <groupId>ch.zhaw.gpi</groupId>
+    <artifactId>resident-register</artifactId>
     <name>Personenregister</name>
+    <version>3.0.1</version>
     
-    <!-- Eltern-Maven-Projekt, auf welchem dieses Projekt aufbaut -->
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.8.RELEASE</version>
-    </parent>
-    
-    <!-- Verschiedene Eigenschaften, die von Maven und untenstehender Dependency-Deklarationen genutzt werden -->
+    <!-- Konfiguration des Maven-Projekts -->
     <properties>
+        <!-- Nicht bloss ANSI, sondern UTF-8 soll unterstützt sein -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <camunda.version>7.8.0</camunda.version>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        
+        <!-- Setzt die Spring Boot-Starter-Version auf 3.0.0, was Camunda 7.9 enthält -->
+        <camunda-bpm-spring-boot-starter.version>3.0.0</camunda-bpm-spring-boot-starter.version>
+        
+        <!-- Java 8 soll genutzt werden beim Kompilieren -->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <camunda-bpm-spring-boot-starter.version>2.3.0</camunda-bpm-spring-boot-starter.version>
     </properties>
     
-    <!-- Definiert camunda-bom als zentrale Dependency, welche sicherstellt, dass
-         die verschiedenen Dependencies von Camunda alle zur camunda.version passen -->
+    <!-- Setzt Spring Boot als massgebend für die Verwaltung der Abhängigkeiten in Maven -->
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.camunda.bpm</groupId>
-                <artifactId>camunda-bom</artifactId>
-                <version>${camunda.version}</version>
-                <scope>import</scope>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>2.0.2.RELEASE</version>
                 <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
     
-    <!-- Auflistung der verschiedenen über das Parent-Projekt hinausgehenden Abhängigkeiten -->
+    <!-- Legt die einzelnen Abhängigkeiten des Maven-Projekts fest -->
     <dependencies>
-        <!-- Camunda Spring Boot Starter für die Camunda Plattform (v.a. Engine) -->
-        <dependency>
-            <groupId>org.camunda.bpm.springboot</groupId>
-            <artifactId>camunda-bpm-spring-boot-starter</artifactId>
-            <version>${camunda-bpm-spring-boot-starter.version}</version>
-        </dependency>
-	
-        <!-- Camunda Spring Boot Starter für die Webapps (Tasklist & Co.) -->
+        <!-- Importiert eine für die Spring Boot-Umgebung konfigurierte Camunda-
+        Umgebung, beinhaltend: Spring-Framework, Tomcat-Server, Camunda Process
+        Engine, Camunda Webapps (Tasklist, Cockpit, Admin), Camunda Spin
+        https://mvnrepository.com/artifact/org.camunda.bpm.springboot/camunda-bpm-spring-boot-starter-webapp/3.0.0 -->
         <dependency>
             <groupId>org.camunda.bpm.springboot</groupId>
             <artifactId>camunda-bpm-spring-boot-starter-webapp</artifactId>
             <version>${camunda-bpm-spring-boot-starter.version}</version>
         </dependency>
-	
-        <!-- Camunda Spring Boot Starter für die REST API -->
+        
+        <!-- Importiert die REST API als weiterer Zugang für die Camunda Process Engine
+        https://mvnrepository.com/artifact/org.camunda.bpm.springboot/camunda-bpm-spring-boot-starter-rest/3.0.0 -->
         <dependency>
             <groupId>org.camunda.bpm.springboot</groupId>
             <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
             <version>${camunda-bpm-spring-boot-starter.version}</version>
         </dependency>
-	
-        <!-- Spring Framework -->
+    
+        <!-- Importiert die H2-Datenbank-Abhängigkeit, damit die Camunda Process
+        Engine ihre Daten in H2 in-memory ablegen kann -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+        
+        <!-- Import die JDBC-Unterstützung für Spring Boot, damit H2 auch 
+        file-basiert sein kann -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
         
         <!-- Spring Boot Starter für JPA -->
@@ -69,51 +76,28 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-    
-        <!-- Unterstützung für filebased und In-Memory-H2-Datenbank -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-        </dependency>
         
-        <!-- Camunda Spring Boot Starter für automatisierte Test (BPM Asserts) -->
-        <dependency>
-            <groupId>org.camunda.bpm.springboot</groupId>
-            <artifactId>camunda-bpm-spring-boot-starter-test</artifactId>
-            <version>${camunda-bpm-spring-boot-starter.version}</version>
-            <scope>test</scope>
-        </dependency>
-	
-        <!-- Unterstützung für JDBC aus Spring Framework heraus -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-        </dependency>
-        
-        <!-- 
-        *** 
-        * Alle folgenden Abhaengigkeiten sind im Zusammenhang mit SOAP-Web 
-        * Services erforderlich:
-        * cxf-rt-frontend-jaxws -> Java API for XML Web Services-Komponenten
-        * cxf-rt-transports-http -> CXF-Servlet-Komponenten
-        * stax2-api und woodstox-core-asl -> Erforderlich wegen Bug, der hier 
-        * beschrieben ist: https://stackoverflow.com/questions/20114945/cxf-web-service-client-cannot-create-a-secure-xmlinputfactory
-        ***
+        <!-- Alle folgenden Abhaengigkeiten sind im Zusammenhang mit SOAP-Web 
+        Services erforderlich:
+        - cxf-rt-frontend-jaxws -> Java API for XML Web Services-Komponenten
+        - cxf-rt-transports-http -> CXF-Servlet-Komponenten
+        - stax2-api und woodstox-core-asl -> Erforderlich wegen Bug, der hier 
+        beschrieben ist: https://stackoverflow.com/questions/20114945/cxf-web-service-client-cannot-create-a-secure-xmlinputfactory
         -->
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
-            <version>3.2.0</version>
+            <version>3.2.5</version>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-transports-http</artifactId>
-            <version>3.2.0</version>
+            <version>3.2.5</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.woodstox</groupId>
             <artifactId>stax2-api</artifactId>
-            <version>4.0.0</version>
+            <version>4.1</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.woodstox</groupId>
@@ -123,13 +107,26 @@
     </dependencies>
     
     <build>
-        <!-- Beim Build-Prozess genutzte Plugins -->
         <plugins>
-            <!-- Spring Boot Maven Plugin, um auch aus der Kommandozeile die Applikation zu starten -->
+            <!-- The Spring Boot Maven Plugin provides Spring Boot support in Maven, 
+            allowing you to package executable jar or war archives and run an application “in-place”.
+            https://docs.spring.io/spring-boot/docs/2.0.4.RELEASE/maven-plugin/usage.html -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.0.3.RELEASE</version>
+                <configuration>
+                    <layout>ZIP</layout>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
+            
             <!-- 
             ***
             * Das JAXB2-Plugin ist erforderlich, um aus XML Schema Definitions
@@ -140,7 +137,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>2.2</version>
+                <version>2.4</version>
                 <executions>
                     <execution>
                         <id>xjc</id>

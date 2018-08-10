@@ -1,6 +1,6 @@
-package ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.configuration;
+package ch.zhaw.gpi.residentregister.configuration;
 
-import ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.endpoint.PersonenRegisterService;
+import ch.zhaw.gpi.residentregister.endpoint.ResidentRegisterServiceEndpoint;
 import javax.xml.ws.Endpoint;
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBus;
@@ -63,8 +63,8 @@ public class WebServiceConfiguration {
      * @return 
      */
     @Bean
-    public PersonenRegisterService personenRegisterService() {
-        return new PersonenRegisterService();
+    public ResidentRegisterServiceEndpoint personenRegisterService() {
+        return new ResidentRegisterServiceEndpoint();
     }
 
     /**

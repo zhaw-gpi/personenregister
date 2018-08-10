@@ -1,7 +1,6 @@
-package ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.delegates;
+package ch.zhaw.gpi.residentregister.delegates;
 
-import ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.entities.Resident;
-import ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.repository.ResidentRepository;
+import ch.zhaw.gpi.residentregister.entities.ResidentEntity;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +8,7 @@ import javax.inject.Named;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
+import ch.zhaw.gpi.residentregister.repository.ResidentRegisterRepository;
 
 /**
  * Datenbankabfrage nach den Personenangaben
@@ -19,11 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
  * enthalten.
  */
 @Named("queryPersonInRegisterAdapter")
-public class GetResidentFromRegisterDbDelegate implements JavaDelegate{
+public class GetResidentFromResidentRegisterDelegate implements JavaDelegate{
     
     // Das für die Datenbankabfragen zuständige Repository wird als Dependency injiziert
     @Autowired
-    private ResidentRepository residentRepository;
+    private ResidentRegisterRepository residentRepository;
     
     /**
      * Datenbankabfrage nach den Personenangaben
@@ -39,7 +39,7 @@ public class GetResidentFromRegisterDbDelegate implements JavaDelegate{
         
         // Repository-Methode aufrufen, welche die eigentliche Datenbankabfrage basierend
         // auf den übergegebenen Prozessvariablen durchführt und ein personsFound-Objekt zurückgibt
-        List<Resident> personsFound = residentRepository.findResidentByIdentificationParameters(
+        List<ResidentEntity> personsFound = residentRepository.findResidentByIdentificationParameters(
                 (String) processVariables.get("firstName"), 
                 (String) processVariables.get("officialName"),
                 (Integer) processVariables.get("sex"),
@@ -48,10 +48,10 @@ public class GetResidentFromRegisterDbDelegate implements JavaDelegate{
         
         // Wenn genau eine Person gefunden wurde, sollen die mitzuziehnden Personen als Prozess-Variable gesetzt werden.
         if(personsFound.size() == 1) {
-           //Da es ja nur ein Element in der Liste gibt, wird das erste Element (also Index 0) aus der Liste in eine Variable von Typ Resident zugewiesen.
-           Resident resident = personsFound.get(0);
+           //Da es ja nur ein Element in der Liste gibt, wird das erste Element (also Index 0) aus der Liste in eine Variable von Typ ResidentEntity zugewiesen.
+           ResidentEntity resident = personsFound.get(0);
            // Die relatives dieser Person werden ermittelt
-           List<Resident> relatives = resident.getRelativesOnly();
+           List<ResidentEntity> relatives = resident.getRelativesOnly();
            //Prozessvariable personRelatives wird erstellt.
            delegateExecution.setVariable("personRelatives", relatives);
         }

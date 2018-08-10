@@ -1,4 +1,4 @@
-package ch.zhaw.sml.iwi.gpi.musterloesung.personenregister.helpers;
+package ch.zhaw.gpi.residentregister.helpers;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
