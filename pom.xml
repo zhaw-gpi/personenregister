@@ -8,7 +8,7 @@
     <groupId>ch.zhaw.gpi</groupId>
     <artifactId>resident-register</artifactId>
     <name>Personenregister</name>
-    <version>3.0.2</version>
+    <version>3.0.3</version>
     
     <!-- Konfiguration des Maven-Projekts -->
     <properties>

@@ -54,6 +54,9 @@ ResidentRegisterServiceTests-soapui-project.xml
 ### Tests aus der Umzugsplattform heraus
 Hierzu den Anweisungen folgen in https://github.com/zhaw-gpi/eumzug_musterloesung
 
+## Zugriff auf Camunda Webapps
+Wohl selten erforderlich, aber falls doch: Anmelden mit Benutzername und Passwort a bei http://localhost:8083
+
 ## Offene Punkte
 1. ResidentRegisterController:135:localPersonId sollte frisch pro Person generiert
 werden und nicht von Hauptperson übernommen werden
