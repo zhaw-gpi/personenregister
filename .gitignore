@@ -24,3 +24,5 @@
 /nbactions.xml
 /customs.json
 /src/main/resources/camunda-license.txt
+
+/logs/
